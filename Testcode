@@ -10,12 +10,14 @@ unsigned long letzteMessung = 0;
 
 void setup() {
     // Serielle Verbindung starten
-    Serial.begin(115200);
-    Wire.begin();
+    Serial.begin(115200); // Serielle Kommunikation mit dem PC
+
+    // Standard-I2C-Pins verwenden
+    Wire.begin(); // Standard-I2C-Schnittstelle verwenden
 
     // Sensor initialisieren
     Serial.println("Sensor wird initialisiert...");
-    sensor.begin(Wire);
+    sensor.begin(Wire); // Sensor mit I2C-Bus konfigurieren
     if (sensor.deviceReset()) {
         Serial.println("Fehler: Sensor konnte nicht initialisiert werden!");
         while (true); // Stoppt das Programm
@@ -37,18 +39,18 @@ void leseSensordaten() {
     float pm1p0Mass, pm2p5Mass, pm4p0Mass, pm10p0Mass;
 
     // Variablen für Partikelanzahlen
-    float pm0p5Count, pm1p0Count, pm2p5Count, pm4p0Count, pm10p0Count;
+    float pm0p5Count, pm1p0Count;
 
     // Variablen für Temperatur und Luftfeuchtigkeit
     float temperatur, luftfeuchtigkeit;
 
-    // Dummy-Variablen für Luftqualitätsindizes (wird nicht genutzt)
+    // Dummy-Variablen für Luftqualitätsindizes
     float vocIndex, noxIndex;
 
     // Sensordaten lesen
     if (sensor.readMeasuredPmValues(
             pm1p0Mass, pm2p5Mass, pm4p0Mass, pm10p0Mass,  // Massenkonzentrationen
-            pm0p5Count, pm1p0Count,                       // Partikelanzahlen für PM0.5 und PM1.0
+            pm0p5Count, pm1p0Count,                       // Partikelanzahlen
             temperatur, luftfeuchtigkeit,                 // Temperatur und Luftfeuchtigkeit
             vocIndex, noxIndex)) {                        // Luftqualitätsindizes
         Serial.println("Fehler beim Lesen der Sensordaten.");
@@ -59,10 +61,11 @@ void leseSensordaten() {
     Serial.println("----- Sensordaten -----");
     Serial.print("Temperatur: "); Serial.print(temperatur, 2); Serial.println(" °C");
     Serial.print("Luftfeuchtigkeit: "); Serial.print(luftfeuchtigkeit, 2); Serial.println(" %");
-    Serial.print("PM0.5: "); Serial.print(pm0p5Count, 2); Serial.println(" Partikel/m³");
-    Serial.print("PM1.0: "); Serial.print(pm1p0Count, 2); Serial.println(" Partikel/m³");
-    Serial.print("PM2.5: "); Serial.print(pm2p5Mass, 2); Serial.println(" Partikel/m³");
-    Serial.print("PM4.0: "); Serial.print(pm4p0Mass, 2); Serial.println(" Partikel/m³");
-    Serial.print("PM10: "); Serial.print(pm10p0Mass, 2); Serial.println(" Partikel/m³");
+    Serial.print("PM0.5 (Particle Count): "); Serial.print(pm0p5Count, 2); Serial.println(" Partikel/m³");
+    Serial.print("PM1.0 (Particle Count): "); Serial.print(pm1p0Count, 2); Serial.println(" Partikel/m³");
+    Serial.print("PM1.0 (Mass Concentration): "); Serial.print(pm1p0Mass, 2); Serial.println(" µg/m³");
+    Serial.print("PM2.5 (Mass Concentration): "); Serial.print(pm2p5Mass, 2); Serial.println(" µg/m³");
+    Serial.print("PM4.0 (Mass Concentration): "); Serial.print(pm4p0Mass, 2); Serial.println(" µg/m³");
+    Serial.print("PM10 (Mass Concentration): "); Serial.print(pm10p0Mass, 2); Serial.println(" µg/m³");
     Serial.println("-----------------------------\n");
 }
